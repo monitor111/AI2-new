@@ -1,0 +1,33 @@
+
+
+
+
+<?php get_header(); ?>
+
+<?php if (have_posts()) : ?>
+    <section class="card-section">
+        <div class="card-container">
+            <?php while (have_posts()) : the_post(); ?>
+                <div class="card">
+                    <!-- Ссылка на страницу товара -->
+                    <a href="<?php the_permalink(); ?>">
+                        <!-- Изображение товара -->
+                        <?php if (has_post_thumbnail()) : ?>
+                            <img src="<?php the_post_thumbnail_url('medium'); ?>" alt="<?php the_title(); ?>">
+                        <?php else: ?>
+                            <img src="<?php echo get_template_directory_uri(); ?>/img/default.jpg" alt="Изображение товара">
+                        <?php endif; ?>
+                    </a>
+                    <h2><?php the_title(); ?></h2> <!-- Название товара -->
+                    <p><?php the_excerpt(); ?></p> <!-- Краткое описание товара -->
+                    <a href="<?php the_permalink(); ?>" class="card-button custom-button">Перейти</a> <!-- Ссылка на страницу товара -->
+                </div>
+            <?php endwhile; ?>
+        </div>
+    </section>
+<?php else : ?>
+    <p>Записей не найдено.</p>
+<?php endif; ?>
+
+
+<?php get_footer(); ?>

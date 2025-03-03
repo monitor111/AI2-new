@@ -1,0 +1,197 @@
+1. Регистрация пользователя и автоматическая авторизация
+Файл: register.php
+
+Нам нужно убедиться, что после регистрации пользователь автоматически авторизуется и перенаправляется в админку.
+
+Обновите register.php следующим образом:
+
+php
+<?php
+/*
+Template Name: Register
+*/
+get_header();
+?>
+
+<link rel="stylesheet" href="<?php echo get_stylesheet_uri(); ?>">
+
+<section class="registration-section">
+    <form action="" method="POST" class="registration-form">
+        <label for="username">Имя:</label>
+        <input type="text" id="username" name="username" required placeholder="Ваше имя">
+
+        <label for="phone">Телефон:</label>
+        <input type="text" id="phone" name="phone" required placeholder="+380XXXXXXXXX">
+        
+        <button type="submit" class="register-button">Зарегистрироваться</button>
+    </form>
+</section>
+
+<?php
+if ($_SERVER['REQUEST_METHOD'] == 'POST') {
+    $username = sanitize_text_field($_POST['username']);
+    $phone = sanitize_text_field($_POST['phone']);
+    $password = $phone; // Используем номер телефона как пароль
+
+    // Проверяем, существует ли уже пользователь с таким телефоном
+    if (username_exists($phone)) {
+        echo '<p>Пользователь с таким номером телефона уже зарегистрирован.</p>';
+    } else {
+        // Создаем нового пользователя
+        $user_id = wp_create_user($phone, $password, '');
+        if (!is_wp_error($user_id)) {
+            // Обновляем отображаемое имя
+            wp_update_user([
+                'ID' => $user_id,
+                'display_name' => $username,
+                'nickname' => $username,
+            ]);
+
+            // Авторизуем пользователя
+            wp_set_current_user($user_id);
+            wp_set_auth_cookie($user_id);
+
+            // Перенаправляем в админку
+            wp_redirect(home_url('/admin/'));
+            exit;
+        } else {
+            echo '<p>Ошибка при регистрации: ' . $user_id->get_error_message() . '</p>';
+        }
+    }
+}
+get_footer();
+?>
+
+
+
+
+
+2. Авторизация пользователя
+Файл: custom-login.php
+
+Убедимся, что после успешной авторизации пользователь перенаправляется в админку.
+
+Проверьте, что custom-login.php выглядит так:
+
+php
+<?php
+/*
+Template Name: Custom Login
+*/
+get_header();
+?>
+
+<link rel="stylesheet" href="<?php echo get_stylesheet_uri(); ?>">
+
+<section class="login-section">
+    <form action="" method="POST" class="login-form">
+        <label for="phone">Телефон:</label>
+        <input type="text" id="phone" name="phone" required placeholder="+380XXXXXXXXX">
+        
+        <button type="submit" class="login-button">Войти</button>
+    </form>
+</section>
+
+<?php
+if ($_SERVER['REQUEST_METHOD'] == 'POST') {
+    $phone = sanitize_text_field($_POST['phone']);
+    $password = $phone; // Пароль также номер телефона
+
+    $user = wp_authenticate($phone, $password);
+
+    if (!is_wp_error($user)) {
+        // Авторизуем пользователя
+        wp_set_current_user($user->ID);
+        wp_set_auth_cookie($user->ID);
+
+        // Перенаправляем в админку
+        wp_redirect(home_url('/admin/'));
+        exit;
+    } else {
+        echo '<p>Неверный номер телефона.</p>';
+    }
+}
+get_footer();
+?>
+3. Функции авторизации и перенаправления
+Файл: functions.php
+
+Убедимся, что в functions.php настроены все необходимые хуки и функции.
+
+Добавьте или обновите следующие функции:
+
+php
+<?php
+// Отключаем стандартную страницу входа WordPress
+add_action('init', 'custom_login_redirect');
+function custom_login_redirect() {
+    $login_page  = home_url('/custom-login/');
+    $page_viewed = basename($_SERVER['REQUEST_URI']);
+
+    if($page_viewed == "wp-login.php" && $_SERVER['REQUEST_METHOD'] == 'GET') {
+        wp_redirect($login_page);
+        exit;
+    }
+}
+
+// Проверка доступа к странице админки
+add_action('template_redirect', 'admin_page_protection');
+function admin_page_protection() {
+    if (is_page('admin') && !is_user_logged_in()) {
+        wp_redirect(home_url('/custom-login/'));
+        exit;
+    }
+}
+
+// Отключаем панель администратора для пользователей
+add_filter('show_admin_bar', '__return_false');
+?>
+4. Страница админки
+Файл: page-admin.php
+
+Убедимся, что доступ к странице /admin/ ограничен только для авторизованных пользователей, и правильно отображаются данные.
+
+Пример page-admin.php:
+
+php
+<?php
+/*
+Template Name: Admin Page
+*/
+get_header();
+
+if (!is_user_logged_in()) {
+    // Если пользователь не авторизован, перенаправляем на страницу авторизации
+    wp_redirect(home_url('/custom-login/'));
+    exit;
+} else {
+    // Получаем данные текущего пользователя
+    $current_user = wp_get_current_user();
+    echo '<h2>Здравствуйте, ' . esc_html($current_user->display_name) . '!</h2>';
+    echo '<p>Добро пожаловать в ваш личный кабинет.</p>';
+    
+    // Добавьте здесь содержимое вашей админки
+
+    // Кнопка выхода
+    echo '<a href="' . wp_logout_url(home_url()) . '">Выйти</a>';
+}
+
+get_footer();
+?>
+5. Обновление навигационного меню
+Файл: header.php или где у вас расположено меню навигации.
+
+Убедитесь, что в меню корректно отображаются ссылки "Личный кабинет", "Авторизация" и "Регистрация" в зависимости от состояния пользователя.
+
+Пример кода:
+
+php
+<ul class="navbar-list navbar-right">
+    <?php if (is_user_logged_in()) : ?>
+        <li><a href="<?php echo home_url('/admin/'); ?>" class="navbar-button">Личный кабинет</a></li>
+        <li><a href="<?php echo wp_logout_url(home_url()); ?>" class="navbar-button">Выйти</a></li>
+    <?php else : ?>
+        <li><a href="<?php echo home_url('/custom-login/'); ?>" class="navbar-button">Авторизация</a></li>
+        <li><a href="<?php echo home_url('/register/'); ?>" class="navbar-button">Регистрация</a></li>
+    <?php endif; ?>
+</ul>
