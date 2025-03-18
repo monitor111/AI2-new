@@ -72,7 +72,7 @@ $thumbnail = get_the_post_thumbnail_url($post_id, 'thumbnail');
   </aside>
 
   <div class="content-wrapper iframe-mode" data-widget="iframe" data-loading-screen="750">
-    <form action="<?php echo admin_url('admin-post.php'); ?>" method="post" class="col-4" enctype="multipart/form-data">
+    <form action="<?php echo admin_url('admin-post.php'); ?>" method="post" class="col-md-12" enctype="multipart/form-data">
 
         
         <!-- Заголовок и описание -->

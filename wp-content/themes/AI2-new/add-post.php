@@ -73,7 +73,7 @@ Template Name: Add Post
     <!-- <div class="col-1 mt-2">
        <a href="<?php echo site_url('/add-post/'); ?>" class="btn btn-block btn-primary">Додати</a>
     </div> -->
-<form action="<?php echo esc_url(admin_url('admin-post.php')); ?>" method="post" class="col-4" enctype="multipart/form-data">
+<form action="<?php echo esc_url(admin_url('admin-post.php')); ?>" method="post" class="col-12" enctype="multipart/form-data">
     <div class="form-group">
         <label for="post_title">Назва</label>
         <input type="text" id="post_title" name="post_title" class="form-control" placeholder="Назва поста" required>
