@@ -8401,3 +8401,45 @@ a.text-dark:hover, a.text-dark:focus {
       content: none; }
 
 /*# sourceMappingURL=style.css.map */
+
+
+
+
+.additional-image {
+    width: 100%;
+    max-width: 200px; /* Ограничение по ширине */
+    height: auto;
+    object-fit: cover;
+    border-radius: 5px;
+}
+
+/* Для картинок в редакторе не ВП */
+.post-content img {
+    max-width: 100%; /* Ограничивает ширину изображения до 100% от родительского элемента */
+    height: auto;    /* Сохраняет пропорции изображения */
+    display: block;  /* Убирает отступы снизу и выравнивает изображения */
+    margin: 0 auto;  /* Центрирует изображения */
+}
+
+
+
+.pagination-container {
+    text-align: center;
+    margin-top: 20px;
+}
+
+.pagination-container .page-numbers {
+    display: inline-block;
+    padding: 8px 12px;
+    margin: 0 5px;
+    border: 1px solid #ddd;
+    color: #333;
+    text-decoration: none;
+}
+
+.pagination-container .page-numbers.current {
+    background-color: #28a745;
+    color: white;
+    border-color: #28a745;
+}
+

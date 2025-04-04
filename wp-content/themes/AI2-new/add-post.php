@@ -19,11 +19,25 @@ Template Name: Add Post
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
 
   <!-- Bootstrap CSS -->
-  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.1/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-YS1HBX+RfcmC0zyGknvpGLVqpeYr0dvDeBpOsIKrU9vUqSVpTLB4NEZqYZI+4+7G" crossorigin="anonymous">
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.1/dist/css/bootstrap.min.css" rel="stylesheet" crossorigin="anonymous">
   <!-- Theme style -->
   <link rel="stylesheet" href="<?php echo get_template_directory_uri(); ?>/admin/css/adminlte.min.css">
-  <!-- overlayScrollbars -->
-  <link rel="stylesheet" href="<?php echo get_template_directory_uri(); ?>/admin/css/OverlayScrollbars.min.css">
+
+<script src="https://cdn.ckeditor.com/4.20.1/standard-all/ckeditor.js"></script>
+
+
+
+
+<?php
+// Подключаем необходимые скрипты и стили для редактора WordPress
+function load_wp_editor_assets() {
+    wp_enqueue_script('wp-tinymce');
+    wp_enqueue_script('editor');
+    wp_enqueue_style('editor-buttons');
+}
+add_action('wp_enqueue_scripts', 'load_wp_editor_assets');
+?>
+
 </head>
 <body class="hold-transition sidebar-mini layout-fixed" data-panel-auto-height-mode="height">
 
@@ -70,18 +84,17 @@ Template Name: Add Post
 
    <!-- Content Wrapper. Contains page content -->
   <div class="content-wrapper iframe-mode" data-widget="iframe" data-loading-screen="750">
-    <!-- <div class="col-1 mt-2">
-       <a href="<?php echo site_url('/add-post/'); ?>" class="btn btn-block btn-primary">Додати</a>
-    </div> -->
-<form action="<?php echo esc_url(admin_url('admin-post.php')); ?>" method="post" class="col-12" enctype="multipart/form-data">
+     <form action="<?php echo esc_url(admin_url('admin-post.php')); ?>" method="post" class="col-12" enctype="multipart/form-data">
+    <?php wp_nonce_field('add_post_nonce'); ?> <!-- Добавляем nonce -->
+    
     <div class="form-group">
         <label for="post_title">Назва</label>
         <input type="text" id="post_title" name="post_title" class="form-control" placeholder="Назва поста" required>
     </div>
 
     <div class="form-group">
-        <label for="post_content">Опис</label>
-        <textarea id="post_content" name="post_content" class="form-control" placeholder="Опис поста"></textarea>
+        <label for="editor">Контент</label>
+        <textarea name="post_content" id="editor" class="form-control"></textarea>
     </div>
 
     <div class="form-group">
@@ -101,9 +114,28 @@ Template Name: Add Post
     <button type="submit" class="btn btn-primary">Додати пост</button>
 </form>
 
+ 
 
 
-  </div>
+<!-- <form action="" method="post">
+    <div class="form-group">
+        <label for="post_title">Заголовок поста</label>
+        <input type="text" id="post_title" name="post_title" class="form-control" placeholder="Введите заголовок">
+    </div>
+
+    <div class="form-group">
+        <label for="editor">Контент</label>
+        <textarea name="content" id="editor" class="form-control"></textarea>
+    </div>
+
+    <button type="submit" class="btn btn-primary">Опубликовать</button>
+</form> -->
+
+
+
+
+
+</div>
 
 
   <!-- /.content-wrapper -->
@@ -126,20 +158,32 @@ Template Name: Add Post
 
 
 
+<script src="https://code.jquery.com/jquery-2.2.4.min.js"></script>
 
 
-<script src="<?php echo get_template_directory_uri(); ?>/admin/js/jquery.min.js"></script>
+<!-- Подключаем jQuery UI -->
 <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.min.js"></script>
+
 <script>
-  $.widget.bridge('uibutton', $.ui.button)
+  $.widget.bridge('uibutton', $.ui.button);
 </script>
 
-<!-- AdminLTE App -->
-<script src="<?php echo get_template_directory_uri(); ?>/admin/js/adminlte.min.js"></script>
-<!-- AdminLTE for demo purposes -->
-<script src="<?php echo get_template_directory_uri(); ?>/admin/js/demo.js"></script>
 
-<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.1/dist/js/bootstrap.bundle.min.js" crossorigin="anonymous"></script>
+
+
+
+<script src="https://cdn.ckeditor.com/ckeditor5/24.0.0/classic/ckeditor.js"></script>
+<script>
+    ClassicEditor
+        .create(document.querySelector('#editor'))  // Инициализация редактора на textarea с id "editor"
+        .catch(error => {
+            console.error(error);
+        });
+</script>
+
+
+
+
 
 
 

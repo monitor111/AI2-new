@@ -24,20 +24,6 @@ add_action('init', 'theme_ai_register_menus');
 
 
 
-
-
-
-
-
-// Регистрация меню
-// function theme_ai_register_menus() {
-//     register_nav_menus(array(
-//         'header-menu' => 'Меню в шапке',
-//     ));
-// }
-// add_action('init', 'theme_ai_register_menus');
-
-// Поддержка миниатюр для записей и страниц
 add_theme_support('post-thumbnails');
 
 // Установка размера миниатюры, если нужно
@@ -73,81 +59,67 @@ add_action('pre_get_posts', 'set_posts_per_page');
 
 
 // Добавление поста , и подключения админки.
-function enqueue_adminlte_assets() {
-    if (is_page_template('page-admin.php')) {
-        wp_enqueue_style('adminlte-css', get_template_directory_uri() . '/admin/css/adminlte.min.css');
-        wp_enqueue_style('adminlte-fontawesome', get_template_directory_uri() . '/admin/css/all.min.css');
-        wp_enqueue_script('adminlte-js', get_template_directory_uri() . '/admin/js/adminlte.min.js', array('jquery'), null, true);
-        wp_enqueue_script('adminlte-bootstrap', get_template_directory_uri() . '/admin/js/bootstrap.bundle.min.js', array('jquery'), null, true);
-    }
-}
-add_action('wp_enqueue_scripts', 'enqueue_adminlte_assets');
-
-function custom_enqueue_styles_scripts() {
-    wp_enqueue_style('custom-style', get_template_directory_uri() . '/css/custom-style.css');
-    wp_enqueue_script('custom-script', get_template_directory_uri() . '/js/custom-script.js', array(), null, true);
-}
-add_action('wp_enqueue_scripts', 'custom_enqueue_styles_scripts');
-
-function my_custom_footer() {
-    echo '<p>Дополнительная информация о компании</p>';
-}
-remove_action('wp_footer', 'some_footer_function');
-add_action('wp_footer', 'my_custom_footer');
+// function enqueue_adminlte_assets() {
+//     if (is_page_template('page-admin.php')) {
+//         wp_enqueue_style('adminlte-css', get_template_directory_uri() . '/admin/css/adminlte.min.css');
+//         wp_enqueue_style('adminlte-fontawesome', get_template_directory_uri() . '/admin/css/all.min.css');
+//         wp_enqueue_script('adminlte-js', get_template_directory_uri() . '/admin/js/adminlte.min.js', array('jquery'), null, true);
+//         wp_enqueue_script('adminlte-bootstrap', get_template_directory_uri() . '/admin/js/bootstrap.bundle.min.js', array('jquery'), null, true);
+//     }
+// }
+// add_action('wp_enqueue_scripts', 'enqueue_adminlte_assets');
 
 
+// function add_custom_post() {
+//     if (!isset($_POST['post_title'])) {
+//         wp_die('Ошибка: нет заголовка.');
+//     }
 
-function add_custom_post() {
-    if (!isset($_POST['post_title'])) {
-        wp_die('Ошибка: нет заголовка.');
-    }
+//     $post_data = array(
+//         'post_title'   => sanitize_text_field($_POST['post_title']),
+//         'post_content' => sanitize_textarea_field($_POST['post_content']),
+//         'post_status'  => 'publish',
+//         'post_type'    => 'post',
+//     );
 
-    $post_data = array(
-        'post_title'   => sanitize_text_field($_POST['post_title']),
-        'post_content' => sanitize_textarea_field($_POST['post_content']),
-        'post_status'  => 'publish',
-        'post_type'    => 'post',
-    );
+//     $post_id = wp_insert_post($post_data);
 
-    $post_id = wp_insert_post($post_data);
+//     if ($post_id) {
+//         require_once ABSPATH . 'wp-admin/includes/image.php';
+//         require_once ABSPATH . 'wp-admin/includes/file.php';
+//         require_once ABSPATH . 'wp-admin/includes/media.php';
 
-    if ($post_id) {
-        require_once ABSPATH . 'wp-admin/includes/image.php';
-        require_once ABSPATH . 'wp-admin/includes/file.php';
-        require_once ABSPATH . 'wp-admin/includes/media.php';
+//         if (!empty($_FILES['post_thumbnail']['name'])) {
+//             $thumbnail_id = media_handle_upload('post_thumbnail', $post_id);
+//             if (!is_wp_error($thumbnail_id)) {
+//                 set_post_thumbnail($post_id, $thumbnail_id);
+//             }
+//         }
 
-        if (!empty($_FILES['post_thumbnail']['name'])) {
-            $thumbnail_id = media_handle_upload('post_thumbnail', $post_id);
-            if (!is_wp_error($thumbnail_id)) {
-                set_post_thumbnail($post_id, $thumbnail_id);
-            }
-        }
+//         $uploaded_images = [];
+//         for ($i = 1; $i <= 4; $i++) {
+//             $key = 'additional_image_' . $i;
+//             if (!empty($_FILES[$key]['name'])) {
+//                 $image_id = media_handle_upload($key, $post_id);
+//                 if (!is_wp_error($image_id)) {
+//                     $uploaded_images[] = wp_get_attachment_url($image_id);
+//                 }
+//             }
+//         }
 
-        $uploaded_images = [];
-        for ($i = 1; $i <= 4; $i++) {
-            $key = 'additional_image_' . $i;
-            if (!empty($_FILES[$key]['name'])) {
-                $image_id = media_handle_upload($key, $post_id);
-                if (!is_wp_error($image_id)) {
-                    $uploaded_images[] = wp_get_attachment_url($image_id);
-                }
-            }
-        }
+//         if (!empty($uploaded_images)) {
+//             update_post_meta($post_id, 'additional_images', $uploaded_images);
+//         }
 
-        if (!empty($uploaded_images)) {
-            update_post_meta($post_id, 'additional_images', $uploaded_images);
-        }
+//         wp_redirect(home_url('/admin/'));
+//         exit;
+//     } else {
+//         wp_die('Ошибка при добавлении поста.');
+//     }
+// }
 
-        wp_redirect(home_url('/admin/'));
-        exit;
-    } else {
-        wp_die('Ошибка при добавлении поста.');
-    }
-}
-
-add_action('admin_post_add_custom_post', 'add_custom_post');
-add_action('admin_post_nopriv_add_custom_post', 'add_custom_post');
-
+// add_action('admin_post_add_custom_post', 'add_custom_post');
+// add_action('admin_post_nopriv_add_custom_post', 'add_custom_post');
 
 
 
@@ -177,7 +149,9 @@ function update_custom_post() {
     $post_data = array(
         'ID'           => $post_id,
         'post_title'   => sanitize_text_field($_POST['post_title']),
-        'post_content' => sanitize_textarea_field($_POST['post_content']),
+        // 'post_content' => sanitize_textarea_field($_POST['post_content']),
+        'post_content' => wp_kses_post($_POST['post_content']),
+
     );
     wp_update_post($post_data);
 
@@ -289,6 +263,93 @@ function check_if_user_logged_in() {
 
 // Отключаем панель администратора для пользователей
 add_filter('show_admin_bar', '__return_false');
+
+
+
+
+
+
+// Фильтр по заголовкам поста
+add_filter('posts_search', 'search_by_title_only', 10, 2);
+function search_by_title_only($search, $wp_query) {
+    if (!empty($wp_query->query_vars['search_terms'])) {
+        global $wpdb;
+        $q = $wp_query->query_vars;
+        $n = !empty($q['exact']) ? '' : '%';
+        $search = array();
+        foreach ($q['search_terms'] as $term) {
+            $search[] = $wpdb->prepare("$wpdb->posts.post_title LIKE %s", $n . $wpdb->esc_like($term) . $n);
+        }
+        $search = ' AND (' . implode(' OR ', $search) . ')';
+    }
+    return $search;
+}
+
+
+
+
+
+
+
+function handle_add_post() {
+    if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['action']) && $_POST['action'] == 'add_custom_post') {
+
+        // Проверяем nonce для безопасности
+        if (!isset($_POST['_wpnonce']) || !wp_verify_nonce($_POST['_wpnonce'], 'add_post_nonce')) {
+            die('Security check failed');
+        }
+
+        // Обрабатываем заголовок и контент
+        $post_title = sanitize_text_field($_POST['post_title']);
+        $content = wp_kses_post($_POST['post_content']); // Используем wp_kses_post для контента, чтобы избежать XSS
+
+        // Создаем новый пост
+        $new_post = array(
+            'post_title'   => $post_title,
+            'post_content' => $content,
+            'post_status'  => 'publish',
+            'post_author'  => get_current_user_id(),
+            'post_type'    => 'post',
+        );
+
+        // Вставляем пост в базу данных
+        $post_id = wp_insert_post($new_post);
+
+        if ($post_id) {
+            // Добавляем главную картинку
+            if (!empty($_FILES['post_thumbnail']['name'])) {
+                $attachment_id = media_handle_upload('post_thumbnail', $post_id);
+                if (!is_wp_error($attachment_id)) {
+                    set_post_thumbnail($post_id, $attachment_id);
+                }
+            }
+
+            // Добавляем дополнительные картинки
+            $uploaded_images = [];
+            for ($i = 1; $i <= 4; $i++) {
+                if (!empty($_FILES['additional_image_' . $i]['name'])) {
+                    $attachment_id = media_handle_upload('additional_image_' . $i, $post_id);
+                    if (!is_wp_error($attachment_id)) {
+                        $uploaded_images[] = wp_get_attachment_url($attachment_id);
+                    }
+                }
+            }
+
+            // Если есть дополнительные картинки, сохраняем их как метаполя
+            if (!empty($uploaded_images)) {
+                update_post_meta($post_id, 'additional_images', $uploaded_images);
+            }
+
+            // Перенаправление на страницу с созданным постом
+            wp_redirect(get_permalink($post_id));
+            exit();
+        }
+    }
+}
+
+// Хук для обработки формы добавления поста
+add_action('admin_post_add_custom_post', 'handle_add_post');
+add_action('admin_post_nopriv_add_custom_post', 'handle_add_post');
 
 
 

@@ -66,15 +66,16 @@
         </ul>
     </nav>
     <!-- Full screen search box -->
-    <div id="searchModal" class="search-modal">
-        <button type="button" class="close" aria-label="Close" data-dismiss="searchModal">
-            <span aria-hidden="true">&times;</span>
-        </button>
-        <form action="index.html" method="get" class="oleez-overlay-search-form">
-            <label for="search" class="sr-only">Search</label>
-            <input type="search" class="oleez-overlay-search-input" id="search" name="search" placeholder="Search here">
-        </form>
-    </div>
+<div id="searchModal" class="search-modal">
+    <button type="button" class="close" aria-label="Close" data-dismiss="searchModal">
+        <span aria-hidden="true">&times;</span>
+    </button>
+    <form action="<?php echo esc_url( home_url( '/' ) ); ?>" method="get" class="oleez-overlay-search-form">
+        <label for="search" class="sr-only">Search</label>
+        <input type="search" class="oleez-overlay-search-input" id="search" name="s" placeholder="Search here">
+    </form>
+</div>
+
 <script src="<?php echo get_template_directory_uri(); ?>/assets/vendors/popper.js/popper.min.js"></script>
 <script src="<?php echo get_template_directory_uri(); ?>/assets/vendors/wowjs/wow.min.js"></script>
 <script src="<?php echo get_template_directory_uri(); ?>/assets/vendors/bootstrap/dist/js/bootstrap.min.js"></script>

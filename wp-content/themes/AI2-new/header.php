@@ -69,10 +69,10 @@
                             <a class="dropdown-item" href="<?php echo get_permalink( get_page_by_path( 'shop' ) ); ?>">Shop</a>
                             <a class="dropdown-item" href="<?php echo get_permalink( get_page_by_path( 'contacts' ) ); ?>">Contact</a>
                         </div>
-                    </li>
+                    </li>  -->
                     <li class="nav-item">
                         <a class="nav-link" href="<?php echo get_permalink( get_page_by_path( 'portfolio' ) ); ?>">Portfolio</a>
-                    </li> -->
+                    </li>
 
                     <li class="nav-item">
                         <a class="nav-link" href="<?php echo get_permalink( get_page_by_path( 'blog' ) ); ?>">Blog</a>
